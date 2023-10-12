@@ -34,14 +34,12 @@ export default function TodoScreen({ navigation, route }) {
     }
     return 0;
   }
-
   function addToTheList() {
-    if (addtodo != "") {
+    if (addtodo !== "") {
       const newtodo = todoitems.concat({ key: addtodo });
-
       newtodo.sort(compare);
-
       setTodoitems(newtodo);
+      setAddtodo("");
       setErrormessage("");
     } else {
       setErrormessage("You need to enter something!");
@@ -62,31 +60,40 @@ export default function TodoScreen({ navigation, route }) {
     setTodoitems(newlist);
   }
 
-  function deleteTodo(rownumber) {}
+  function deleteTodo(rownumber) {
+    const newlistStart = [...todoitems].slice(0, rownumber);
+    const newlistEnd = [...todoitems].slice(rownumber + 1);
+    const newlist = newlistStart.concat(newlistEnd);
+
+    setTodoitems(newlist);
+  }
 
   return (
     <View style={styles.container}>
-      <Text>TODO</Text>
-
       {errormessage != "" && <Text>{errormessage}</Text>}
 
-      <TextInput
-        value={addtodo}
-        onChangeText={setAddtodo}
-        placeholder="Add todo"
-      />
+      <View style={styles.todoinputcontainer}>
+        <TextInput
+          value={addtodo}
+          onChangeText={setAddtodo}
+          placeholder="Add todo"
+          style={{ flex: 1 }}
+        />
 
-      <Button
-        title="Add"
-        onPress={() => {
-          addToTheList();
-        }}
-      />
+        <Button
+          title="Add"
+          onPress={() => {
+            addToTheList();
+          }}
+        />
+      </View>
 
       <FlatList
         data={todoitems}
+        style={styles.todoList}
         renderItem={({ item, index }) => (
           <TouchableOpacity
+            style={{ borderWidth: 1, borderRadius: 30, margin: 10 }}
             onPress={() => {
               //changeDone(index);
               navigation.push("TodoDetail", { todoitem: item, rownumb: index });
@@ -123,5 +130,18 @@ const styles = StyleSheet.create({
     height: 100,
     resizeMode: "contain",
     backgroundColor: "#ff0000",
+  },
+
+  todoinputcontainer: {
+    flexDirection: "row",
+    marginLeft: 30,
+    marginRight: 30,
+    marginTop: 30,
+  },
+
+  todoList: {
+    width: "100%",
+    paddingLeft: 15,
+    paddingRight: 15,
   },
 });

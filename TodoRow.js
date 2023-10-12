@@ -6,18 +6,20 @@ import { Image, StyleSheet, Text, View } from "react-native";
 export default function TodoRow(props) {
   return (
     <View style={rowstyles.todorow}>
-      <Text>{props.todoinfo.key}</Text>
-      {props.todoinfo.isdone && <Text> KLAR</Text>}
+      <Text style={{ flex: 1, marginLeft: 10, marginRight: 10 }}>
+        {props.todoinfo.key}
+      </Text>
+      {props.todoinfo.isdone && <Text>Task done</Text>}
 
       <Button
-        title="KLAR"
+        title={props.todoinfo.isdone ? "Set not done" : "Set done"}
         onPress={() => {
           props.todoChangeDone();
         }}
       />
 
       <Button
-        title="DELETE"
+        title="Delete"
         onPress={() => {
           props.todoDelete();
         }}
@@ -30,8 +32,8 @@ const rowstyles = StyleSheet.create({
   todorow: {
     flex: 1,
     backgroundColor: "lightblue",
-    alignItems: "center",
-    justifyContent: "center",
     flexDirection: "row",
+    borderRadius: 30,
+    alignItems: "center",
   },
 });
