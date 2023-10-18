@@ -4,9 +4,8 @@ import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { Button, FlatList, TextInput, TouchableOpacity } from "react-native";
 import { Image, StyleSheet, Text, View } from "react-native";
-import TodoScreen from "./TodoScreen";
-import TodoDetail from "./TodoDetail";
-
+import TodoScreen from "./screens/TodoScreen";
+import TodoDetail from "./screens/TodoDetail";
 const Stack = createNativeStackNavigator();
 
 export default function App() {

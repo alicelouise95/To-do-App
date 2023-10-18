@@ -3,16 +3,21 @@ import { useEffect, useState } from "react";
 import { Button, FlatList, TextInput, TouchableOpacity } from "react-native";
 import { Image, StyleSheet, Text, View } from "react-native";
 import TodoRow from "./TodoRow";
+import TodoHeader from "./TodoHeader";
+import TodoErrorbox from "./TodoErrorbox";
+import { doFunStuff, sortByDone } from "./TodoHelper";
 
 export default function TodoScreen({ navigation, route }) {
   const [addtodo, setAddtodo] = useState("");
 
   const [todoitems, setTodoitems] = useState([
-    { key: "Abc", isdone: false },
-    { key: "B", isdone: true },
+    { key: "Example task 1", isdone: false },
+    { key: "Example task 2", isdone: true },
   ]);
 
   const [errormessage, setErrormessage] = useState("");
+
+  const [listtype, setListtype] = useState("all");
 
   useEffect(() => {
     if (route.params?.todoname) {
@@ -25,24 +30,19 @@ export default function TodoScreen({ navigation, route }) {
     }
   }, [route.params?.todoname]);
 
-  function compare(a, b) {
-    if (b.isdone) {
-      return -1;
-    }
-    if (a.isdone) {
-      return 1;
-    }
-    return 0;
-  }
   function addToTheList() {
     if (addtodo !== "") {
       const newtodo = todoitems.concat({ key: addtodo });
-      newtodo.sort(compare);
+      newtodo.sort(sortByDone);
       setTodoitems(newtodo);
       setAddtodo("");
       setErrormessage("");
     } else {
       setErrormessage("You need to enter something!");
+
+      setTimeout(() => {
+        setErrormessage("");
+      }, 10000);
     }
   }
 
@@ -55,7 +55,7 @@ export default function TodoScreen({ navigation, route }) {
       newlist[rownumber].isdone = true;
     }
 
-    newlist.sort(compare);
+    newlist.sort(sortByDone);
 
     setTodoitems(newlist);
   }
@@ -68,9 +68,28 @@ export default function TodoScreen({ navigation, route }) {
     setTodoitems(newlist);
   }
 
+  function filtertodo(todo) {
+    if (listtype == "all") {
+      return true;
+    }
+    if (listtype == "done") {
+      return todo.isdone == true;
+    }
+    if (listtype == "todo") {
+      return todo.isdone != true;
+    }
+  }
+
   return (
     <View style={styles.container}>
-      {errormessage != "" && <Text>{errormessage}</Text>}
+      <TodoHeader />
+
+      {errormessage !== "" && (
+        <TodoErrorbox
+          errormessage={errormessage}
+          clickbox={() => setErrormessage("")}
+        />
+      )}
 
       <View style={styles.todoinputcontainer}>
         <TextInput
@@ -88,14 +107,35 @@ export default function TodoScreen({ navigation, route }) {
         />
       </View>
 
+      <View style={{ flexDirection: "row" }}>
+        <Button
+          title="All"
+          onPress={() => {
+            setListtype("all");
+          }}
+        />
+        <Button
+          title="To do"
+          onPress={() => {
+            setListtype("todo");
+          }}
+        />
+        <Button
+          title="Done"
+          onPress={() => {
+            setListtype("done");
+          }}
+        />
+      </View>
+
       <FlatList
-        data={todoitems}
+        data={todoitems.filter(filtertodo)}
         style={styles.todoList}
         renderItem={({ item, index }) => (
           <TouchableOpacity
             style={{ borderWidth: 1, borderRadius: 30, margin: 10 }}
             onPress={() => {
-              //changeDone(index);
+              doFunStuff();
               navigation.push("TodoDetail", { todoitem: item, rownumb: index });
             }}
           >
