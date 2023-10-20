@@ -12,7 +12,7 @@ export default function TodoScreen({ navigation, route }) {
 
   const [todoitems, setTodoitems] = useState([
     { key: "Example task 1", isdone: false },
-    { key: "Example task 2", isdone: true },
+    { key: "Example task 2", isdone: false },
   ]);
 
   const [errormessage, setErrormessage] = useState("");
@@ -95,63 +95,95 @@ export default function TodoScreen({ navigation, route }) {
         <TextInput
           value={addtodo}
           onChangeText={setAddtodo}
-          placeholder="Add todo"
-          style={{ flex: 1 }}
-        />
-
-        <Button
-          title="Add"
-          onPress={() => {
+          placeholder="Enter a task"
+          style={styles.addTextinput}
+          onSubmitEditing={() => {
             addToTheList();
           }}
         />
+
+        <TouchableOpacity
+          onPress={() => {
+            addToTheList();
+          }}
+        >
+          <Image
+            source={require("../assets/Add.png")}
+            style={{ width: 30, height: 30, margin: 5 }}
+          />
+        </TouchableOpacity>
       </View>
 
-      <View style={{ flexDirection: "row" }}>
-        <Button
-          title="All"
+      <View style={styles.filterButtons}>
+        <TouchableOpacity
           onPress={() => {
             setListtype("all");
           }}
-        />
-        <Button
-          title="To do"
+          style={
+            listtype == "all"
+              ? styles.filterSelectedButton
+              : styles.filterNotSelectedButton
+          }
+        >
+          <Text style={{ textAlign: "center" }}>All</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           onPress={() => {
             setListtype("todo");
           }}
-        />
-        <Button
-          title="Done"
+          style={
+            listtype == "todo"
+              ? styles.filterSelectedButton
+              : styles.filterNotSelectedButton
+          }
+        >
+          <Text style={{ textAlign: "center" }}>To-do</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           onPress={() => {
             setListtype("done");
           }}
-        />
+          style={
+            listtype == "done"
+              ? styles.filterSelectedButton
+              : styles.filterNotSelectedButton
+          }
+        >
+          <Text style={{ textAlign: "center" }}>Done</Text>
+        </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={todoitems.filter(filtertodo)}
-        style={styles.todoList}
-        renderItem={({ item, index }) => (
-          <TouchableOpacity
-            style={{ borderWidth: 1, borderRadius: 30, margin: 10 }}
-            onPress={() => {
-              doFunStuff();
-              navigation.push("TodoDetail", { todoitem: item, rownumb: index });
-            }}
-          >
-            <TodoRow
-              todoinfo={item}
-              todoChangeDone={() => {
-                console.log("Changes complete." + index);
-                changeDone(index);
+      <View style={styles.listContainer}>
+        <FlatList
+          data={todoitems.filter(filtertodo)}
+          style={styles.todoList}
+          renderItem={({ item, index }) => (
+            <TouchableOpacity
+              style={{ margin: 10 }}
+              onPress={() => {
+                doFunStuff();
+                navigation.push("TodoDetail", {
+                  todoitem: item,
+                  rownumb: index,
+                });
               }}
-              todoDelete={() => {
-                deleteTodo(index);
-              }}
-            />
-          </TouchableOpacity>
-        )}
-      />
+            >
+              <TodoRow
+                todoinfo={item}
+                todoChangeDone={() => {
+                  console.log("Changes complete." + index);
+                  changeDone(index);
+                }}
+                todoDelete={() => {
+                  deleteTodo(index);
+                }}
+              />
+            </TouchableOpacity>
+          )}
+        />
+      </View>
 
       <StatusBar style="auto" />
     </View>
@@ -161,27 +193,62 @@ export default function TodoScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "lightpink",
+    backgroundColor: "#FDF0F0",
     alignItems: "center",
     justifyContent: "center",
-  },
-  finbild: {
-    width: 100,
-    height: 100,
-    resizeMode: "contain",
-    backgroundColor: "#ff0000",
   },
 
   todoinputcontainer: {
     flexDirection: "row",
-    marginLeft: 30,
-    marginRight: 30,
-    marginTop: 30,
+    backgroundColor: "#F1B4BB",
+    width: "100%",
+    padding: 20,
+    borderTopWidth: 0.5,
+  },
+
+  addTextinput: {
+    flex: 1,
+    paddingLeft: 10,
+    borderRadius: 15,
+    borderWidth: 1,
   },
 
   todoList: {
     width: "100%",
     paddingLeft: 15,
     paddingRight: 15,
+    paddingTop: 20,
+  },
+
+  filterButtons: {
+    flexDirection: "row",
+    backgroundColor: "#F1B4BB",
+    width: "100%",
+    height: 40,
+    paddingLeft: 5,
+  },
+
+  filterSelectedButton: {
+    backgroundColor: "#db848e",
+    width: "33%",
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderTopWidth: 1,
+    justifyContent: "center",
+  },
+  filterNotSelectedButton: {
+    backgroundColor: "#F1B4BB",
+    width: "33%",
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderTopWidth: 1,
+    justifyContent: "center",
+  },
+
+  listContainer: {
+    flex: 1,
+    backgroundColor: "#fad9d9",
+    borderTopWidth: 1,
+    width: "100%",
   },
 });

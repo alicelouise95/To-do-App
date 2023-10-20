@@ -19,13 +19,12 @@ export default function TodoErrorbox(props) {
 
 const styles = StyleSheet.create({
   errorbox: {
-    backgroundColor: "lightred",
     width: "70%",
     height: 40,
     marginTop: 20,
   },
 
   errorText: {
-    color: "white",
+    color: "red",
   },
 });
